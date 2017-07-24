@@ -1,0 +1,7 @@
+# Execute "vagrant ssh-config" to validate ssh port mappings.
+
+
+centos6.6  ansible_ssh_host=127.0.0.1 ansible_ssh_port=2202
+
+[xenial]
+centos6.6
