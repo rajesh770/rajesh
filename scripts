@@ -1,0 +1,52 @@
+Testing that a file exists
+
+This test is done in a lot of scripts, because there's no use in starting a lot of programs if you know they're not going to work:
+
+#!/bin/bash
+
+# This script gives information about a file.
+
+FILENAME="$1"
+
+echo "Properties for $FILENAME:"
+
+if [ -f $FILENAME ]; then
+  echo "Size is $(ls -lh $FILENAME | awk '{ print $5 }')"
+  echo "Type is $(file $FILENAME | cut -d":" -f2 -)"
+  echo "Inode number is $(ls -i $FILENAME | cut -d" " -f1 -)"
+  echo "$(df -h $FILENAME | grep -v Mounted | awk '{ print "On",$1", \
+which is mounted as the",$6,"partition."}')"
+else
+  echo "File does not exist."
+fi
+------------------------------------------------
+
+This is an example that you can put in your crontab for daily execution:
+
+anny /etc/cron.daily> cat disktest.sh
+#!/bin/bash
+
+# This script does a very simple test for checking disk space.
+
+space=`df -h | awk '{print $5}' | grep % | grep -v Use | sort -n | tail -1 | cut -d "%" -f1 -`
+alertvalue="80"
+
+if [ "$space" -ge "$alertvalue" ]; then
+  echo "At least one of my disks is nearly full!" | mail -s "daily diskcheck" root
+else
+  echo "Disk space normal" | mail -s "daily diskcheck" root
+fi
+--------------------------------------------------
+# To add it in rc.local file.
+
+if test -f /sys/kernel/mm/transparent_hugepage/enabled; then
+  echo never > /sys/kernel/mm/transparent_hugepage/enabled
+fi
+
+------------------------------------------------
+# Listing directories servers.
+
+for fn in *; do
+  [ -d "$fn" ] && echo "$fn"
+done
+
