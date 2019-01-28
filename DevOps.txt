@@ -1,0 +1,50 @@
+Simple shell script to send one line status mail.
+
+#!/bin/bash
+echo "Message Body!" | /usr/bin/mail -s "Message Title" example@example.com
+What if you want to send a multi-line message? you can wrap your lines in a shell function and use the following code.
+
+#!/bin/bash
+function mystatus {
+    echo "Script started successfully"
+    echo "Backup operation completed successfully"
+    echo "File transferred successfully"
+}
+mystatus | /usr/bin/mail -s "Message Title" example@example.com
+Alternatively you can store messages in a temporary file and load the message body from the file
+
+#!/bin/bash
+
+TMPFILE="/tmp/mailbody.txt"
+echo "Script started successfully" > $TMPFILE
+echo "Backup operation completed successfully" >> $TMPFILE
+echo "File transferred successfully" >> $TMPFILE
+
+/usr/bin/mail -s "Message Title" example@example.com < $TMPFILE
+A real example: how you can get the status email whether your MySQL database is backed up properly or not.
+
+#!/bin./bash
+function mysqlbackup {
+    echo "Script started successfully"
+    if (mysqldump -uusername -ppassword database_name > data.sql); then
+        echo "MySQL database backed up successfully"
+    else
+        echo "Error: Could not take database backup!"
+    fi
+
+}
+mysqlbackup | /usr/bin/mail -s "Backup Status" example@example.com
+
+
+To remove unwanted spaces.
+
+sed 's/[[:space:]]//g'
+
+sed 's/[\:""[:space:]]//g'
+
+To print the starting line and ending line
+
+sed -n '200,835p' test.txt
+
+
+for URL in `cat crunchify.txt`; do echo $URL; curl -m 10 -s -I $1 "$URL" | grep HTTP/1.1 |  awk {'print $2'}; done
